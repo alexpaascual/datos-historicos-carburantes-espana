@@ -7,7 +7,7 @@
 - 📊 **Downloads historical prices** from any date
 - 📍 **Gets locations** of all gas stations  
 - 📁 **Generates Excel files** ready to use
-- 🖥️ **Simple interface** - just enter the date and go
+- 🖥️ **Simple interface** - just enter the date 
 
 ## 🚀 How to use
 
