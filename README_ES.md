@@ -60,8 +60,7 @@ python3 sedeapp_simple.py
 | `ModuleNotFoundError` | Ejecutar `pip3 install -r requirements_simple.txt` 
 o `pip install -r requirements_simple.txt`  |
 | `No aparece la ventana` | Verificar instalación de Python con Tkinter |
-| `Aparecen combustibles no seleccionados` | Ejecutar `python3 test_rapido.py` 
-o `python test_rapido.py` para verificar |
+
 
 ## ℹ️ Información técnica
 

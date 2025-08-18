@@ -58,7 +58,7 @@ python3 sedeapp_simple.py
 | `Connection error` | Check internet and retry |
 | `ModuleNotFoundError` | Run `pip3 install -r requirements_simple.txt` or `pip install -r requirements_simple.txt` |
 | `Window doesn't appear` | Verify Python installation with Tkinter |
-| `Unselected fuels appear` | Run `python3 test_rapido.py` or `python test_rapido.py` to verify |
+
 
 ## ℹ️ Technical information
 
