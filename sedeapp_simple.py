@@ -8,7 +8,6 @@ from datetime import datetime, timedelta
 import threading
 from pathlib import Path
 
-# Colores
 VERDE_OSCURO = '#204529'
 VERDE_CLARO = '#7ED957'
 FONDO = VERDE_OSCURO
@@ -21,13 +20,9 @@ class SedeAppSimple(tk.Tk):
         self.configure(bg=FONDO)
         self.geometry('800x700')
         self.resizable(False, False)
-
-        # Variables
         self.carpeta_destino = tk.StringVar()
         self.descarga_en_progreso = False
-        
-        # Variables para combustibles adicionales
-        # NOMBRES EXACTOS como aparecen en los datos (sin "Precio ")
+    
         self.combustibles_disponibles = [
             'Gasolina 95 E5', 'Gasoleo A', 'Gasoleo B', 'Gasoleo Premium', 'Gasolina 95 E10',
             'Gasolina 98 E5', 'Gasolina 98 E10', 'Gasolina 95 E5 Premium',
@@ -36,7 +31,7 @@ class SedeAppSimple(tk.Tk):
         ]
         self.combustibles_vars = {}
 
-        # Verificar que existe el script de Scrapy
+
         if not Path('scrapy_carburantes_simple.py').exists():
             messagebox.showerror(
                 "Error", 
@@ -52,14 +47,10 @@ class SedeAppSimple(tk.Tk):
         fuente = ('Segoe UI', 11)
         fuente_bold = ('Segoe UI', 11, 'bold')
         
-
-
-        # Título
         titulo = tk.Label(self, text='SEDEApp Carburantes', 
                          bg=FONDO, fg=VERDE_CLARO, font=('Segoe UI', 13, 'bold'))
         titulo.pack(pady=(15, 10))
 
-        # Instrucciones
         instrucciones = tk.Label(
             self, 
             text='Introduce un día (dd-mm-aaaa) o un rango (desde dd-mm-aaaa hasta dd-mm-aaaa):',
@@ -67,14 +58,12 @@ class SedeAppSimple(tk.Tk):
         )
         instrucciones.pack(pady=(0, 8))
 
-        # Campo de entrada
         self.entry = tk.Entry(self, font=('Segoe UI', 12), width=50, fg='grey')
         self.entry.insert(0, 'Ejemplo: 13-05-2024 o desde 01-01-2024 hasta 31-12-2024')
         self.entry.bind('<FocusIn>', self.clear_placeholder)
         self.entry.bind('<FocusOut>', self.add_placeholder)
         self.entry.pack(pady=(0, 15))
 
-        # Botón para seleccionar carpeta
         btn_carpeta = tk.Button(
             self, text='📁 Seleccionar carpeta destino', 
             command=self.seleccionar_carpeta, bg=VERDE_CLARO, 
@@ -82,14 +71,12 @@ class SedeAppSimple(tk.Tk):
         )
         btn_carpeta.pack(pady=(0, 5))
 
-        # Mostrar carpeta seleccionada
         self.label_carpeta = tk.Label(
             self, text='Ninguna carpeta seleccionada', 
             bg=FONDO, fg=TEXTO, font=('Segoe UI', 9)
         )
         self.label_carpeta.pack(pady=(0, 10))
 
-        # Sección de combustibles adicionales
         combustibles_frame = tk.LabelFrame(
             self, text='⛽ Combustibles', 
             bg=FONDO, fg=VERDE_CLARO, font=fuente_bold,
@@ -97,7 +84,6 @@ class SedeAppSimple(tk.Tk):
         )
         combustibles_frame.pack(pady=(0, 15), padx=20, fill='x')
         
-        # Explicación sobre combustibles sin datos
         explicacion_comb = tk.Label(
             combustibles_frame,
             text='ℹ️ Solo se incluirán combustibles que tengan datos en la fecha seleccionada\n(Combustibles con columnas vacías se omiten automáticamente)',
@@ -106,7 +92,6 @@ class SedeAppSimple(tk.Tk):
         )
         explicacion_comb.pack(pady=(0, 8))
         
-        # Crear checkboxes para combustibles en 2 columnas
         checkboxes_frame = tk.Frame(combustibles_frame, bg=FONDO)
         checkboxes_frame.pack()
         
@@ -114,7 +99,6 @@ class SedeAppSimple(tk.Tk):
             var = tk.BooleanVar()
             self.combustibles_vars[combustible] = var
             
-            # Determinar columna (0 o 1)
             columna = i % 2
             fila = i // 2
             
@@ -126,7 +110,6 @@ class SedeAppSimple(tk.Tk):
             )
             checkbox.grid(row=fila, column=columna, sticky='w', padx=(0, 20), pady=2)
         
-        # Botones para gestionar selecciones
         botones_comb_frame = tk.Frame(combustibles_frame, bg=FONDO)
         botones_comb_frame.pack(pady=(8, 0))
         
@@ -146,7 +129,6 @@ class SedeAppSimple(tk.Tk):
         )
         btn_seleccionar_comunes.pack(side='left')
 
-        # Botón de descarga
         self.btn_descargar = tk.Button(
             self, text='⚡ Descargar', command=self.descargar, 
             bg=VERDE_CLARO, font=fuente_bold, relief='flat', 
@@ -154,11 +136,9 @@ class SedeAppSimple(tk.Tk):
         )
         self.btn_descargar.pack(pady=(0, 10))
 
-        # Área de progreso
         self.progreso = tk.Label(self, text='', bg=FONDO, fg=VERDE_CLARO, font=fuente)
         self.progreso.pack(pady=(0, 3))
         
-        # Línea de progreso detallado
         self.progreso_detalle = tk.Label(self, text='', bg=FONDO, fg='lightgray', font=('Segoe UI', 9))
         self.progreso_detalle.pack(pady=(0, 3))
 
@@ -176,7 +156,6 @@ class SedeAppSimple(tk.Tk):
         carpeta = filedialog.askdirectory(title='Selecciona la carpeta de destino')
         if carpeta:
             self.carpeta_destino.set(carpeta)
-            # Mostrar solo el final de la ruta si es muy larga
             display_path = carpeta
             if len(display_path) > 60:
                 display_path = "..." + display_path[-57:]
@@ -194,14 +173,12 @@ class SedeAppSimple(tk.Tk):
             self.progreso.config(text='⚠️ Por favor, introduce una fecha o rango de fechas', fg='orange')
             return
 
-        # Validar fechas
         fechas_resultado = self.procesar_fechas(entrada)
         if not fechas_resultado:
             return
 
         fecha_inicio, fecha_fin, total_dias = fechas_resultado
 
-        # Confirmar si es un rango grande
         if total_dias > 31:
             resultado = messagebox.askyesno(
                 "Confirmación", 
@@ -212,7 +189,6 @@ class SedeAppSimple(tk.Tk):
             if not resultado:
                 return
 
-        # Lanzar descarga
         self.descarga_en_progreso = True
         self.btn_descargar.config(state='disabled', text='Descargando...')
         
@@ -288,15 +264,11 @@ class SedeAppSimple(tk.Tk):
     def ejecutar_scrapy(self, fecha_inicio, fecha_fin, total_dias):
         """Ejecutar el script de Scrapy robusto que funciona"""
         try:
-            # Obtener combustibles seleccionados
             combustibles_extra = self.obtener_combustibles_seleccionados()
             
-            # Actualizar progreso inicial
             self.after(0, lambda: self.progreso.config(text=f'🚀 Iniciando descarga de {total_dias} archivo(s)...', fg='yellow'))
-            # Ocultar línea de detalle durante descarga
             self.after(0, lambda: self.progreso_detalle.config(text='', fg='lightgray'))
         
-            # Comando de Scrapy
             cmd = [
                 'python', '-m', 'scrapy', 'runspider', 'scrapy_carburantes_simple.py',
                 '-a', f'fecha_inicio={fecha_inicio}',
@@ -304,21 +276,15 @@ class SedeAppSimple(tk.Tk):
                 '--loglevel=INFO'
             ]
             
-            # Agregar combustibles extra si hay alguno seleccionado
             if combustibles_extra:
                 combustibles_str = ','.join(combustibles_extra)
                 cmd.extend(['-a', f'combustibles_extra={combustibles_str}'])
 
-            # Actualizar progreso durante ejecución
             self.after(0, lambda: self.progreso.config(text='', fg='yellow'))
-            # Mantener línea de detalle oculta durante descarga
-            
-
             
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=os.getcwd())
 
             if result.returncode == 0:
-                # Scrapy exitoso - buscar archivos generados
                 fecha_str = f'{datetime.strptime(fecha_inicio, "%d-%m-%Y").strftime("%Y%m%d")}_{datetime.strptime(fecha_fin, "%d-%m-%Y").strftime("%Y%m%d")}'
                 carpeta_scrapy = f'carburantes_scrapy_{fecha_str}'
                 
@@ -383,7 +349,6 @@ class SedeAppSimple(tk.Tk):
                     self.after(0, lambda: self.progreso.config(text='⚠️ No se encontró carpeta de resultados', fg='orange'))
                     self.after(0, lambda: self.progreso_detalle.config(text='Scrapy ejecutó pero no generó la carpeta esperada', fg='orange'))
             else:
-                # Error en Scrapy
                 error_msg = result.stderr[:200] if result.stderr else 'Error desconocido'
                 self.after(0, lambda: self.progreso.config(text='❌ Error en Scrapy', fg='red'))
                 self.after(0, lambda: self.progreso_detalle.config(text=f'Error: {error_msg[:80]}... Verifica instalación de Scrapy', fg='red'))
@@ -393,17 +358,9 @@ class SedeAppSimple(tk.Tk):
             self.after(0, lambda: self.progreso_detalle.config(text=str(e)[:100], fg='red'))
             
         finally:
-            # Reactivar botón y limpiar progreso detallado
             self.after(0, lambda: self.btn_descargar.config(state='normal', text='⚡ Descargar'))
             self.after(0, lambda: setattr(self, 'descarga_en_progreso', False))
-
-            # Limpiar progreso después de 30 segundos
             self.after(30000, lambda: self.progreso_detalle.config(text=''))
-
-
-
-
-
 
     def fecha_valida(self, fecha_str):
         try:
