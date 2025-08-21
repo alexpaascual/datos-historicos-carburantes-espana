@@ -1,6 +1,6 @@
 # 🚀 SEDEAPP - Sistema de Datos de Gasolineras España
 
-**Descarga automática de precios de gasolineras de España | Automated system to download official gas station data from Spain**
+**Descarga automática de precios de gasolineras de España | Historical spanish fuel price data app**
 
 [![Python](https://img.shields.io/badge/python-3.6+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
