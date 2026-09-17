@@ -1,5 +1,7 @@
 # SEDEAPP — Spanish Fuel Price Data
 
+![1789657301876](image/README/1789657301876.png)
+
 Download official historical fuel prices for every gas station in Spain as ready-to-use Excel files.
 
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://python.org)
