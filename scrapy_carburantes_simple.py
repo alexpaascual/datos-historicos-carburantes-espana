@@ -71,7 +71,7 @@ class CarburantesSpider(scrapy.Spider):
         os.makedirs(self.output_dir, exist_ok=True)
         self.logger.info(f'📁 Archivos se guardarán en: {self.output_dir}')
         
-    def start_requests(self):
+    def _peticiones_iniciales(self):
         """Generar todas las peticiones iniciales"""
         base_url = 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestresHist'
         
@@ -83,6 +83,16 @@ class CarburantesSpider(scrapy.Spider):
                 meta={'fecha': fecha},
                 dont_filter=True,
             )
+    
+    async def start(self):
+        """Punto de entrada en Scrapy >= 2.13."""
+        for peticion in self._peticiones_iniciales():
+            yield peticion
+    
+    def start_requests(self):
+        """Punto de entrada en Scrapy < 2.13, eliminado en versiones posteriores."""
+        return self._peticiones_iniciales()
+    
     
     def parse_datos(self, response):
         """Procesar la respuesta JSON de cada fecha"""

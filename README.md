@@ -1,68 +1,76 @@
-# 🚀 SEDEAPP - Sistema de Datos de Gasolineras España
+# SEDEAPP — Spanish Fuel Price Data
 
-**Descarga automática de precios de gasolineras de España | Automated system to download official gas station data from Spain**
+Download official historical fuel prices for every gas station in Spain as ready-to-use Excel files.
 
-[![Python](https://img.shields.io/badge/python-3.6+-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Data Source](https://img.shields.io/badge/data-MITECO%20Official-orange.svg)](https://sedeaplicaciones.minetur.gob.es/)
 
-## ¿Qué es SEDEAPP? | What is SEDEAPP?
+*Léeme en [español](docs/README.es.md).*
 
-**🇪🇸 ESPAÑOL:** SEDEAPP es una **aplicación gratuita** para descargar **precios históricos de combustibles** de todas las **gasolineras de España**. Obtén datos oficiales del **Ministerio MITECO** en formato Excel para análisis de precios de gasolina, gasóleo, y otros combustibles.
+SEDEAPP is a small desktop app that pulls fuel price data from the official API of Spain's Ministry for Ecological Transition (MITECO) — the same source behind the government's own fuel price apps. Pick a date or a date range, choose which fuels you care about, and it writes one Excel file per day with prices, station details, and GPS coordinates.
 
-**🇬🇧 ENGLISH:** SEDEAPP is a **simple GUI application** that downloads official fuel price data from all gas stations in Spain using the Ministry's official API (MITECO). Get historical prices from any date and generate Excel files ready for analysis.
-
-### ✨ Características Principales | Key Features
-
-- 📊 **Datos históricos** - Precios de combustibles de cualquier fecha disponible
-- 📍 **Todas las gasolineras** - Cobertura completa de España (Repsol, Cepsa, BP, etc.)
-- 📁 **Archivos Excel** - Datos listos para análisis y estudios de mercado
-- 🖥️ **Interfaz simple** - Solo introduce fechas y descarga automáticamente
-- ⛽ **15+ combustibles** - Gasolina 95, Gasóleo A, GLP, GNC, Hidrógeno y más
-
-### 🚀 Quick Start
+## Quick start
 
 ```bash
-# Install dependencies
-pip install -r requirements_simple.txt
-
-# Run the application
+pip install -r requirements.txt
 python sedeapp_simple.py
 ```
 
-Enter a date (e.g., `13-05-2024`) or date range (e.g., `desde 01-01-2024 hasta 31-12-2024`) and click download!
+In the window that opens, enter a single date as `13-05-2024`, or a range as `desde 01-01-2024 hasta 31-12-2024`. Tick the fuels you want, optionally pick a destination folder, and click **Descargar**.
 
-## 📖 Documentation
+## What you get
 
-- **🇪🇸 [Español - Guía Completa](README_ES.md)** - Instrucciones detalladas en español
-- **🇬🇧 [English - Full Guide](README_EN.md)** - Detailed instructions in English
+One `.xlsx` per day, containing:
 
-## 💡 Casos de Uso | Use Cases
+- **Prices** for the fuels you selected
+- **Location** — address, municipality, province, postal code, GPS coordinates
+- **Station details** — brand, services
+- **Date** the data refers to
 
-- **Análisis de mercado** - Comparar precios de gasolina por regiones de España
-- **Optimización de rutas** - Encontrar gasolineras más baratas para viajes
-- **Estudios económicos** - Análisis de tendencias históricas de precios de combustibles
-- **Aplicaciones móviles** - Integrar datos oficiales de gasolineras españolas
-- **Investigación académica** - Datos del sector energético español
+Columns that are more than 80% empty, or that hold the same value in more than 90% of rows, are dropped automatically to keep the files readable.
 
-## 🔧 What's Included
+### Available fuels
 
-- `sedeapp_simple.py` - Main GUI application
-- `scrapy_carburantes_simple.py` - Data scraping engine  
-- `requirements_simple.txt` - Python dependencies
+Gasolina 95 E5, Gasolina 95 E10, Gasolina 95 E5 Premium, Gasolina 98 E5, Gasolina 98 E10, Gasóleo A, Gasóleo B, Gasóleo Premium, Diésel Renovable, Biodiesel, Gases licuados del petróleo (GLP), Gas Natural Comprimido (GNC), Gas Natural Licuado (GNL), Hidrógeno, and AdBlue.
 
-## 📊 Fuente de Datos Oficial | Data Source
+Only fuels that actually have data on the chosen date end up in the file.
 
-**Datos oficiales del MITECO** (Ministerio para la Transición Ecológica) - la misma fuente que usan las aplicaciones oficiales del gobierno español para precios de combustibles. Datos 100% oficiales y actualizados.
+## Use cases
 
-**Official data from MITECO** (Ministry for Ecological Transition) - the same source used by government and official fuel price apps in Spain.
+- Compare prices across regions or between brands
+- Find the cheapest stations along a route
+- Study historical price trends for economics or academic research
+- Feed official station data into a map or mobile app
 
-## 📄 License / Licencia
+## Project files
 
-This project is open source and available under the MIT License.
-Este proyecto es código abierto y está disponible bajo la Licencia MIT.
+| File | Purpose |
+|---|---|
+| `sedeapp_simple.py` | Main GUI application — run this one |
+| `scrapy_carburantes_simple.py` | Scrapy spider that fetches and cleans the data |
+| `requirements.txt` | Python dependencies |
+
+## Troubleshooting
+
+| Problem | Solution |
+|---|---|
+| `ModuleNotFoundError` | Run `pip install -r requirements.txt` |
+| Window doesn't appear | Your Python build is missing Tkinter. On Debian/Ubuntu: `sudo apt install python3-tk` |
+| `Connection error` | Check your internet connection and retry — the ministry's API is occasionally down |
+| No Excel files generated | The ministry has no data for that date. Try a more recent one |
+
+## Technical notes
+
+- **Data source**: MITECO public REST API (`EstacionesTerrestresHist`)
+- **Output format**: Excel `.xlsx`
+- **Rate limiting**: requests are throttled and retried automatically to stay well within polite use of a public API. Expect roughly half a minute per day of data.
+- **Date coverage**: any date for which the ministry publishes historical data
+
+## License
+
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-*Created with AI assistance; [Cursor](https://cursor.sh/) running Claude-4-Sonnet*
-
+*Built with AI assistance using [Cursor](https://cursor.sh/).*

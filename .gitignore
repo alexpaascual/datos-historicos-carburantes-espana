@@ -1,0 +1,28 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Scrapy
+.scrapy/
+
+# Generated fuel price data
+carburantes_scrapy_*/
+SEDEApp_Carburantes_*/
+*.xlsx
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

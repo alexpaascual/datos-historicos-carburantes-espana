@@ -1,12 +1,18 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox
+import shutil
 import subprocess
 import sys
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 import threading
 from pathlib import Path
+
+# Todas las rutas se resuelven contra el directorio del script para que la
+# aplicación funcione aunque se lance desde otra carpeta.
+BASE_DIR = Path(__file__).resolve().parent
+SPIDER_FILE = BASE_DIR / 'scrapy_carburantes_simple.py'
 
 VERDE_OSCURO = '#204529'
 VERDE_CLARO = '#7ED957'
@@ -32,10 +38,10 @@ class SedeAppSimple(tk.Tk):
         self.combustibles_vars = {}
 
 
-        if not Path('scrapy_carburantes_simple.py').exists():
+        if not SPIDER_FILE.exists():
             messagebox.showerror(
                 "Error", 
-                "No se encuentra 'py_carburantes_simplescra.py'\n"
+                f"No se encuentra '{SPIDER_FILE.name}'\n"
                 "Este archivo es necesario para el funcionamiento."
             )
             self.destroy()
@@ -270,7 +276,7 @@ class SedeAppSimple(tk.Tk):
             self.after(0, lambda: self.progreso_detalle.config(text='', fg='lightgray'))
         
             cmd = [
-                'python', '-m', 'scrapy', 'runspider', 'scrapy_carburantes_simple.py',
+                sys.executable, '-m', 'scrapy', 'runspider', str(SPIDER_FILE),
                 '-a', f'fecha_inicio={fecha_inicio}',
                 '-a', f'fecha_fin={fecha_fin}',
                 '--loglevel=INFO'
@@ -282,11 +288,11 @@ class SedeAppSimple(tk.Tk):
 
             self.after(0, lambda: self.progreso.config(text='', fg='yellow'))
             
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=os.getcwd())
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=str(BASE_DIR))
 
             if result.returncode == 0:
                 fecha_str = f'{datetime.strptime(fecha_inicio, "%d-%m-%Y").strftime("%Y%m%d")}_{datetime.strptime(fecha_fin, "%d-%m-%Y").strftime("%Y%m%d")}'
-                carpeta_scrapy = f'carburantes_scrapy_{fecha_str}'
+                carpeta_scrapy = str(BASE_DIR / f'carburantes_scrapy_{fecha_str}')
                 
                 if os.path.exists(carpeta_scrapy):
                     archivos_excel = [f for f in os.listdir(carpeta_scrapy) if f.endswith('.xlsx')]
@@ -321,16 +327,15 @@ class SedeAppSimple(tk.Tk):
                                         # Si ya existe en destino, eliminarlo
                                         if os.path.exists(destino):
                                             os.remove(destino)
-                                        # Mover archivo
-                                        os.rename(origen, destino)
+                                        # shutil.move admite mover entre unidades distintas
+                                        shutil.move(origen, destino)
                                         archivos_movidos += 1
                                 
                                 # Limpiar carpeta temporal de Scrapy
                                 try:
                                     if os.path.exists(carpeta_scrapy):
-                                        import shutil
                                         shutil.rmtree(carpeta_scrapy)
-                                except:
+                                except OSError:
                                     pass
                                 
                                 self.after(0, lambda: self.progreso.config(text=f'🎉 ¡Completado! {archivos_movidos} archivos Excel', fg='green'))
